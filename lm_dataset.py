@@ -17,9 +17,15 @@ args = ModelArgs()
 max_len = args.max_seq_len
 pad_token = tokenizer.pad_token_id
 
-with open('sml_data.txt', 'r') as f:
-    raw_data = f.readlines()
+# for kaggle
+if os.path.exists("/kaggle/input/tr-news/data.txt"):
+    data_path = "/kaggle/input/tr-news/data.txt"
+else:
+    data_path = "sml_data.txt"  
 
+with open(data_path, "r", encoding="utf-8") as f:
+    data = f.readlines()
+    
 train_ratio = .9
 train_len = int(len(raw_data) * train_ratio)
 
