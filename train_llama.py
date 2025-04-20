@@ -45,7 +45,7 @@ for epoch in range(EPOCH):
     total_train_loss = 0
     progress_bar = tqdm(train_loader, desc=f"[Epoch {epoch+1}] Training")
 
-    for input_batch, target_batch in progress_bar:
+    for i,(input_batch, target_batch) in enumerate(progress_bar):
 
         input_batch = input_batch.to(device)
         target_batch = target_batch.to(device)
@@ -60,6 +60,15 @@ for epoch in range(EPOCH):
         avg_loss = total_train_loss / (progress_bar.n + 1)
         progress_bar.set_postfix(train_loss=avg_loss)
 
+        if i % 10000 == 0:
+            torch.save({
+            'epoch': epoch,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'train_loss': train_losses,
+            'val_loss': val_losses,
+        }, f"checkpoint_epoch_{i+1}-step.pt")
+            
     avg_train_loss = total_train_loss / len(train_loader)
     train_losses.append(avg_train_loss)
     
