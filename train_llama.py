@@ -59,6 +59,11 @@ for epoch in range(EPOCH):
         total_train_loss += loss.item()
         avg_loss = total_train_loss / (progress_bar.n + 1)
         progress_bar.set_postfix(train_loss=avg_loss)
+        global_step = epoch * len(train_loader) + i
+
+        if global_step % 1000 == 0:
+            with open("train_loss_log.txt", "a") as f:
+                f.write(f"Global Step: {global_step}, Epoch: {epoch+1}, Step: {i}, Loss: {loss.item():.4f}\n")
 
         if i % 10000 == 0:
             torch.save({
@@ -67,11 +72,12 @@ for epoch in range(EPOCH):
             'optimizer_state_dict': optimizer.state_dict(),
             'train_loss': train_losses,
             'val_loss': val_losses,
-        }, f"checkpoint_epoch_{i+1}-step.pt")
+        }, f"checkpoint_epoch{epoch+1}_step{i}.pt")
             
     avg_train_loss = total_train_loss / len(train_loader)
     train_losses.append(avg_train_loss)
-    
+    with open("train_loss_log.txt", "a") as f:
+        f.write(f"[Epoch {epoch+1}] Avg Train Loss: {avg_train_loss:.4f}\n")
     # Validation
     args.train=False
     model.eval()
@@ -89,10 +95,20 @@ for epoch in range(EPOCH):
             avg_val_loss_so_far = total_val_loss / (i + 1)  
             progress_bar.set_postfix(val_loss=avg_val_loss_so_far)  
 
+
+            global_step = epoch * len(val_loader) + i
+
+            if global_step % 1000 == 0:
+                with open("val_loss_log.txt", "a") as f:
+                    f.write(f"Global Step: {global_step}, Epoch: {epoch+1}, Step: {i}, Loss: {loss.item():.4f}\n")
+
     avg_val_loss = total_val_loss / len(val_loader)
     val_losses.append(avg_val_loss)
-
+    with open("val_loss_log.txt", "a") as f:
+        f.write(f"[Epoch {epoch+1}] Avg Val Loss: {avg_val_loss:.4f}\n")
+    
     print(f"\nEpoch {epoch+1} - Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f}")
+
 
 torch.save({
     'epoch': epoch,
