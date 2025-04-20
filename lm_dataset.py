@@ -24,7 +24,7 @@ else:
     data_path = "sml_data.txt"  
 
 with open(data_path, "r", encoding="utf-8") as f:
-    data = f.readlines()
+    raw_data = f.readlines()
     
 train_ratio = .9
 train_len = int(len(raw_data) * train_ratio)
