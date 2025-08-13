@@ -200,7 +200,7 @@ class FFN(nn.Module):
 
 
 
-class Encoder(nn.Module):
+class Decoder(nn.Module):
 
     def __init__(self, args:ModelArgs):
         super().__init__()
@@ -235,7 +235,7 @@ class LLaMA(nn.Module):
 
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
-            self.layers.append(Encoder(args))
+            self.layers.append(Decoder(args))
 
         self.norm = RMSNorm(self.dim, args.norm_eps)
         self.linear = nn.Linear(args.dim, self.vocab_size)
